@@ -2,7 +2,6 @@ import { mat4 } from 'gl-matrix'
 import TileManager from '../core/tile_manager'
 import TileSource from '../core/tile_source'
 import { createShader } from '../util/glLib'
-import { getMatrices } from '../util/map_transform'
 
 export class TileDrivenLayer implements mapboxgl.CustomLayerInterface {
     id: string
@@ -73,6 +72,10 @@ export class TileDrivenLayer implements mapboxgl.CustomLayerInterface {
 
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
         }
+    }
+
+    onRemove(){
+        this.tileManager.removeSource('terrainRGB')
     }
 }
 

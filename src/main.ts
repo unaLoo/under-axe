@@ -1,6 +1,7 @@
 import mapboxgl from 'mapbox-gl'
 import TileManager from './core/tile_manager'
 import { TileDrivenLayer } from './test/tileDrivenLayer'
+import { TerrainLayer } from './test/terrainLayer'
 // DOM Configuration //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Map
@@ -154,11 +155,46 @@ function addContrastDom(tileManager: TileManager) {
     }
     domfrag.appendChild(button2)
 
+
     const button3 = document.createElement('button')
-    button3.innerText = 'remove-all'
+    button3.innerText = 'terrain-layer'
     button3.onclick = () => {
+        const terrainLayer = new TerrainLayer('terrain-layer', tileManager)
+        map.addLayer(terrainLayer)
+    }
+    domfrag.appendChild(button3)
+
+    const button4 = document.createElement('button')
+    button4.innerText = 'terrain-layer-mpx'
+    button4.onclick = () => {
+        map.addLayer({
+            id: 'terrain-layer-mpx',
+            type: 'raster',
+            source: {
+                id: 'terrain-raster-source',
+                type: 'raster',
+                tiles: ['/TTB/test/{z}/{x}/{y}.png'],
+            },
+        })
+    }
+    domfrag.appendChild(button4)
+
+    const tileBounds = document.createElement('button')
+    tileBounds.innerText = 'tile-bounds'
+    tileBounds.onclick = () => {
+        map.showTileBoundaries = !map.showTileBoundaries
+    }
+    domfrag.appendChild(tileBounds)
+
+    const deleteBtn = document.createElement('button')
+    deleteBtn.innerText = '❌'
+    deleteBtn.onclick = () => {
         if (map.getLayer('dLayer')) {
             map.removeLayer('dLayer')
+        }
+
+        if (map.getLayer('terrain-layer')) {
+            map.removeLayer('terrain-layer')
         }
 
         if (map.getLayer('mapbox-raster-layer')) {
@@ -167,8 +203,15 @@ function addContrastDom(tileManager: TileManager) {
             map.removeLayer('mapbox-raster-layer')
             source && map.removeSource(source)
         }
+
+        if (map.getLayer('terrain-layer-mpx')) {
+            const layer = map.getLayer('terrain-layer-mpx')!
+            const source = layer.source
+            map.removeLayer('terrain-layer-mpx')
+            source && map.removeSource(source)
+        }
     }
-    domfrag.appendChild(button3)
+    domfrag.appendChild(deleteBtn)
 
     container.appendChild(domfrag)
 }

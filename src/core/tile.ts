@@ -84,16 +84,16 @@ export class Tile {
             (err, bitmap: ImageBitmap) => {
                 if (err) {
                     console.error(err)
-                    this.gpuTexture = createTexture2D(
-                        gl,
-                        this.width,
-                        this.height,
-                        gl.RGBA8,
-                        gl.RGBA,
-                        gl.UNSIGNED_BYTE,
-                        undefined,
-                    )
-                    this.status = 'error'
+                    // this.gpuTexture = createTexture2D(
+                    //     gl,
+                    //     this.width,
+                    //     this.height,
+                    //     gl.RGBA8,
+                    //     gl.RGBA,
+                    //     gl.UNSIGNED_BYTE,
+                    //     undefined,
+                    // )
+                    // this.status = 'error'
                     return
                 }
 
@@ -124,6 +124,7 @@ export class Tile {
         } else if (this.status === 'loaded') {
             this.gl!.deleteTexture(this.gpuTexture)
         }
+        
         this.status = 'aborted'
 
         // this.gpuTexture = null

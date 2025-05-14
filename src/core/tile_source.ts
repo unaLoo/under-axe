@@ -67,7 +67,7 @@ export default class TileSource {
 
     url: string
     dispatcher: Dispatcher
-    lruCache: LRUCache = new LRUCache(125)
+    lruCache: LRUCache = new LRUCache(200)
 
     _tileManager!: TileManager
 
@@ -107,18 +107,18 @@ export default class TileSource {
         const coveringOZIDs = this._tileManager.coveringTiles
 
         // coveringOZIDs[0] : the nearest tile for camera
-        const nearestOZID = coveringOZIDs[0] // 最近的焦点瓦片
+        // const nearestOZID = coveringOZIDs[0] // 最近的焦点瓦片
 
-        this.lruCache.keys.forEach((key) => {
-            const tile = this.lruCache.get<Tile>(key)!
-            if (!tile) return
+        // this.lruCache.keys.forEach((key) => {
+        //     const tile = this.lruCache.get<Tile>(key)!
+        //     if (!tile) return
 
-            const inView = coveringOZIDs.find((ozID) => ozID.key === tile.overscaledTileID.key)
+        //     const inView = coveringOZIDs.find((ozID) => ozID.key === tile.overscaledTileID.key)
 
-            if (!inView && shouldAbort(tile, nearestOZID)) {
-                this.abortTile(tile)
-            }
-        })
+        //     if (!inView && shouldAbort(tile, nearestOZID)) {
+        //         this.abortTile(tile)
+        //     }
+        // })
 
         const tiles: Tile[] = []
         for (const ozID of coveringOZIDs) {
@@ -194,9 +194,11 @@ function shouldAbort(tile: Tile | null, nearestOZID: OverscaledTileID): boolean 
     const dx = scaledTileX - nearestOZID.canonical.x
     const dy = scaledTileY - nearestOZID.canonical.y
     const manhattanDist = Math.abs(dx) + Math.abs(dy)
+    const dist = Math.sqrt(dx * dx + dy * dy)
 
     // 距离nearestOZID的瓦片曼哈顿距离为 100 以上，abort
-    const tolerance = Math.max(100, Math.pow(2, Math.abs(zDiff)) / 2)
+    // const tolerance = Math.max(200, Math.pow(2, Math.abs(zDiff)) / 2)
+    const tolerance = 10
 
-    return manhattanDist > tolerance
+    return dist > tolerance
 }
